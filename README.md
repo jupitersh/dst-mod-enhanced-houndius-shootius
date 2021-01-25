@@ -20,7 +20,11 @@ Both of the function is defaultly enabled, you can disable it in the configurati
 
 ## Changelog
 
-**List of tweaks I made for version 1.0.1**
+**Version 1.1.0**
+
+- Prevent Houndius Shootius From Attacking Each Other.
+
+**Version 1.0.1**
 
 - Added attack range changeable.
 

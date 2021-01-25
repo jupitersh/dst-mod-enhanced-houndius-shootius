@@ -24,3 +24,31 @@ AddPrefabPostInit("eyeturret", function(inst)
 	    end
 	end
 end)
+
+--Prevent Houndius Shootius From Attacking Each Other
+
+if GetModConfigData("eyeturret_protect") then
+	local UpvalueHacker = GLOBAL.require "upvaluehacker"
+	AddPrefabPostInit("world", function(inst)
+	    local RETARGET_MUST_TAGS = { "_combat" }
+	    local RETARGET_CANT_TAGS = { "INLIMBO", "eyeturret" }
+
+	    local function retargetfn(inst)
+	        local playertargets = {}
+	        for i, v in ipairs(GLOBAL.AllPlayers) do
+	            if v.components.combat.target ~= nil then
+	                playertargets[v.components.combat.target] = true
+	            end
+	        end
+
+	        return GLOBAL.FindEntity(inst, 20,
+	            function(guy)
+	                return (playertargets[guy] or (guy.components.combat.target ~= nil and guy.components.combat.target:HasTag("player"))) and inst.components.combat:CanTarget(guy)
+				end,
+		        RETARGET_MUST_TAGS, --see entityreplica.lua
+	            RETARGET_CANT_TAGS
+	        )
+	    end
+	    UpvalueHacker.SetUpvalue(GLOBAL.Prefabs.eyeturret.fn, retargetfn, "retargetfn")
+	end)
+end
